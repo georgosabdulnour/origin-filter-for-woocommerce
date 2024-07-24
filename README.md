@@ -1,6 +1,6 @@
 # Origin Filter for WooCommerce
 
-**Origin Filter for WooCommerce** 
+**Wordpress Origin Filter for WooCommerce** 
 is a WordPress plugin designed to enhance the order management capabilities of WooCommerce by adding a custom filter to the orders page. This plugin allows you to filter orders by their origin and displays the total sales for the selected origin.
 
 ## Features
