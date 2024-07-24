@@ -44,3 +44,32 @@ function filter_orders_by_origin() {
         <?php
     }
 }
+
+
+/**
+ * Modifies the query to filter orders by origin.
+ *
+ * @param WP_Query $query The current query object.
+ */
+add_action('pre_get_posts', 'filter_orders_by_origin_query');
+
+function filter_orders_by_origin_query($query) {
+    global $typenow, $pagenow;
+
+    if (
+        'shop_order' === $typenow &&
+        'edit.php' === $pagenow &&
+        isset($_GET['order_origin']) &&
+        !empty($_GET['order_origin'])
+    ) {
+        $meta_query = array(
+            array(
+                'key' => '_wc_order_attribution_utm_source',
+                'value' => sanitize_text_field($_GET['order_origin']),
+                'compare' => '=',
+            ),
+        );
+
+        $query->set('meta_query', $meta_query);
+    }
+}
