@@ -1,6 +1,6 @@
 # WooCommerce Orders Filter by Origin
 
-**WooCommerce Orders Filter by Origin** 
+**Origin Filter for WooCommerce** 
 is a WordPress plugin designed to enhance the order management capabilities of WooCommerce by adding a custom filter to the orders page. This plugin allows you to filter orders by their origin and displays the total sales for the selected origin.
 
 ## Features
@@ -11,7 +11,7 @@ is a WordPress plugin designed to enhance the order management capabilities of W
 ## Installation
 1. **Download the Plugin:**
    You can download the plugin from the following link:
-   [Download WooCommerce Orders Filter by Origin](URL_TO_YOUR_PLUGIN)
+   [Download Origin Filter for WooCommerce](URL_TO_YOUR_PLUGIN)
 
 2. **Install the Plugin:**
    - Log in to your WordPress admin panel.
@@ -30,7 +30,7 @@ is a WordPress plugin designed to enhance the order management capabilities of W
 - **Viewing Total Sales:** After applying the filter, a message will appear at the top of the orders page showing the total sales for the selected origin.
 
 ## Screenshots
-![Plugin Screenshot](URL_TO_SCREENSHOT_IMAGE)
+[![screenshot.png](https://i.postimg.cc/vH7TmXRC/screenshot.png)](https://postimg.cc/KRzxqP85)
 
 ## Frequently Asked Questions
 
@@ -44,8 +44,8 @@ A: Currently, the filter options are based on the order origins stored in the da
 This plugin is licensed under the GPL2 License. See the [LICENSE](LICENSE) file for more details.
 
 ## Support
-If you encounter any issues or need assistance, please open an issue on [GitHub Issues](URL_TO_YOUR_ISSUES_PAGE).
+If you encounter any issues or need assistance, please open an issue on [GitHub Issues].
 
 ---
-Thank you for using WooCommerce Orders Filter by Origin.
+Thank you for using Origin Filter for WooCommerce.
 
