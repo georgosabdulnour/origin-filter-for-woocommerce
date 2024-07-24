@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Origin Filter for Woocommerce
- * Plugin URI:  https://github.com/georgosabdulnour/Origin-Filter-for-WooCommerce
+ * Plugin URI:  https://github.com/georgosabdulnour/origin-filter-for-woocommerce
  * Description: Adds a filter to WooCommerce orders to filter by order origin and displays total sales for the filtered origin.
  * Version:     1.0
  * Author:      Georgos Abdulnour
@@ -19,7 +19,8 @@ if (!defined('ABSPATH')) {
  */
 add_action('restrict_manage_posts', 'filter_orders_by_origin');
 
-function filter_orders_by_origin() {
+function filter_orders_by_origin()
+{
     global $typenow;
 
     if ('shop_order' === $typenow) {
@@ -53,22 +54,23 @@ function filter_orders_by_origin() {
 
         ?>
         <select name="order_origin" id="order_origin">
-            <option value=""><?php esc_html_e('All Origins', 'woocommerce'); ?></option>
+            <option value=""><?php esc_html_e('All Origins', 'woocommerce');?></option>
             <?php
             foreach ($origins as $origin) {
-                $selected_attr = selected($current_origin, $origin, false);
-                echo '<option value="' . esc_attr($origin) . '" ' . esc_attr($selected_attr) . '>' . esc_html($origin) . '</option>';
-            }
-            ?>
+            $selected_attr = selected($current_origin, $origin, false);
+            echo '<option value="' . esc_attr($origin) . '" ' . esc_attr($selected_attr) . '>' . esc_html($origin) . '</option>';
+             }
+        ?>
         </select>
         <?php
-    }
+}
 }
 
 /**
  * Define a function to get order total from cache or database
  */
-function get_order_total($order_id) {
+function get_order_total($order_id)
+{
     $order_total = get_post_meta($order_id, '_order_total', true);
     return $order_total;
 }
@@ -80,7 +82,8 @@ function get_order_total($order_id) {
  */
 add_action('pre_get_posts', 'filter_orders_by_origin_query');
 
-function filter_orders_by_origin_query($query) {
+function filter_orders_by_origin_query($query)
+{
     global $typenow, $pagenow;
 
     if (
@@ -108,7 +111,8 @@ function filter_orders_by_origin_query($query) {
  */
 add_action('admin_notices', 'display_total_sales_by_origin');
 
-function display_total_sales_by_origin() {
+function display_total_sales_by_origin()
+{
     global $pagenow, $typenow;
 
     if (!current_user_can('manage_woocommerce') || 'edit.php' !== $pagenow || 'shop_order' !== $typenow) {
@@ -127,11 +131,11 @@ function display_total_sales_by_origin() {
                 array(
                     'key' => '_wc_order_attribution_utm_source',
                     'value' => $origin,
-                    'compare' => '='
-                )
+                    'compare' => '=',
+                ),
             ),
             'posts_per_page' => -1, // Fetch all orders without pagination
-            'post_status' => $order_statuses // Include only the specified statuses
+            'post_status' => $order_statuses, // Include only the specified statuses
         );
 
         $query = new WP_Query($args);
@@ -158,27 +162,25 @@ function display_total_sales_by_origin() {
 
             ?>
             <div class="notice notice-success is-dismissible">
-                <p><?php 
-                // Translators: %1$s is the origin filter applied, %2$s is the total sales amount
-                    $message = sprintf(__('Origin Filter applied successfully. Total of %1$s: <b>%2$s</b>', 'woocommerce'), esc_html($origin), $total_sales);
-                    echo wp_kses_post($message); 
-                ?></p>
+                <p><?php
+// Translators: %1$s is the origin filter applied, %2$s is the total sales amount
+            $message = sprintf(__('Origin Filter applied successfully. Total of %1$s: <b>%2$s</b>', 'woocommerce'), esc_html($origin), $total_sales);
+            echo wp_kses_post($message);
+            ?></p>
             </div>
             <?php
-        } else {
+} else {
             ?>
             <div class="notice notice-error is-dismissible">
                 <p><?php
-                // Translators: %s is the origin filter applied
-                 echo wp_kses_post(sprintf(__('No orders found for %s', 'woocommerce'), esc_html($origin))); 
-                 ?></p>
+// Translators: %s is the origin filter applied
+            echo wp_kses_post(sprintf(__('No orders found for %s', 'woocommerce'), esc_html($origin)));
+            ?></p>
             </div>
             <?php
-        }
+}
     }
 }
-
-
 
 /**
  * Saves the order origin when the order is created.
@@ -187,7 +189,8 @@ function display_total_sales_by_origin() {
  */
 add_action('woocommerce_checkout_update_order_meta', 'save_order_origin');
 
-function save_order_origin($order_id) {
+function save_order_origin($order_id)
+{
     // Check nonce for security
     if (!isset($_POST['save_order_origin_nonce']) || !wp_verify_nonce($_POST['save_order_origin_nonce'], 'save_order_origin_action')) {
         return;
@@ -205,4 +208,5 @@ function save_order_origin($order_id) {
         error_log('Order origin is not set');
     }
 }
+
 ?>
