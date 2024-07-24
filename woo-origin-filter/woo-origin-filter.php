@@ -100,3 +100,57 @@ function save_order_origin($order_id) {
         error_log('Order origin is not set');
     }
 }
+
+
+/**
+ * Displays total sales for the filtered origin on the admin orders page.
+ */
+add_action('admin_footer', 'display_total_sales_by_origin');
+
+function display_total_sales_by_origin() {
+    global $pagenow, $typenow, $wpdb;
+
+    // Check user permissions
+    if (!current_user_can('manage_woocommerce') || 'edit.php' !== $pagenow || 'shop_order' !== $typenow) {
+        return;
+    }
+
+    if (isset($_GET['order_origin']) && !empty($_GET['order_origin'])) {
+        $origin = sanitize_text_field($_GET['order_origin']);
+
+        $order_ids = $wpdb->get_col($wpdb->prepare("
+            SELECT p.ID
+            FROM {$wpdb->prefix}posts AS p
+            INNER JOIN {$wpdb->prefix}postmeta AS pm ON p.ID = pm.post_id
+            WHERE p.post_type = 'shop_order'
+            AND p.post_status IN ('wc-completed', 'wc-processing')
+            AND pm.meta_key = %s
+            AND pm.meta_value = %s
+        ", '_wc_order_attribution_utm_source', $origin));
+
+        if (!empty($order_ids)) {
+            $total_sales = 0;
+            foreach ($order_ids as $order_id) {
+                $order_total = $wpdb->get_var($wpdb->prepare("
+                    SELECT meta_value
+                    FROM {$wpdb->prefix}postmeta
+                    WHERE meta_key = %s
+                    AND post_id = %d
+                ", '_order_total', $order_id));
+                $total_sales += floatval($order_total);
+            }
+            $total_sales = wc_price($total_sales);
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <p><?php printf(__('Origin Filter applied successfully. Total of %s: <b>%s</b>', 'woocommerce'), esc_html($origin), $total_sales); ?></p>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="notice notice-error is-dismissible">
+                <p><?php printf(__('No orders found for %s', 'woocommerce'), esc_html($origin)); ?></p>
+            </div>
+            <?php
+        }
+    }
+}
