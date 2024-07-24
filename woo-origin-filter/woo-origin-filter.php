@@ -73,3 +73,30 @@ function filter_orders_by_origin_query($query) {
         $query->set('meta_query', $meta_query);
     }
 }
+
+
+/**
+ * Saves the order origin when the order is created.
+ *
+ * @param int $order_id The order ID.
+ */
+add_action('woocommerce_checkout_update_order_meta', 'save_order_origin');
+
+function save_order_origin($order_id) {
+    // Check nonce for security
+    if (!isset($_POST['save_order_origin_nonce']) || !wp_verify_nonce($_POST['save_order_origin_nonce'], 'save_order_origin_action')) {
+        return;
+    }
+
+    if (isset($_POST['order_origin'])) {
+        $order_origin = sanitize_text_field($_POST['order_origin']);
+
+        if (!empty($order_origin)) {
+            update_post_meta($order_id, '_wc_order_attribution_utm_source', $order_origin);
+        } else {
+            error_log('Order origin is empty');
+        }
+    } else {
+        error_log('Order origin is not set');
+    }
+}
