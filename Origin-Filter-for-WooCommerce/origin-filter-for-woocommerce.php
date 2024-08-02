@@ -3,7 +3,7 @@
  * Plugin Name: Origin Filter for WooCommerce
  * Plugin URI:  https://github.com/georgosabdulnour/origin-filter-for-woocommerce
  * Description: Adds a filter to WooCommerce orders to filter by order origin and displays total sales for the filtered origin and month.
- * Version:     1.0
+ * Version:     1.1
  * Author:      Georgos Abdulnour
  * Author URI: https://github.com/georgosabdulnour
  * License:     GPL2
@@ -15,18 +15,17 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Adds a dropdown to filter orders by origin and a date picker to filter by month on the orders page.
+ * Adds a dropdown to filter orders by origin on the orders page.
  */
-add_action('restrict_manage_posts', 'filter_orders_by_origin_and_month');
+add_action('restrict_manage_posts', 'filter_orders_by_origin');
 
-function filter_orders_by_origin_and_month()
+function filter_orders_by_origin()
 {
     global $typenow;
 
     if ('shop_order' === $typenow) {
         $nonce = wp_create_nonce('filter_orders_by_origin_nonce');
         $current_origin = isset($_GET['order_origin']) ? sanitize_text_field($_GET['order_origin']) : '';
-        $current_month = isset($_GET['m']) ? sanitize_text_field($_GET['m']) : '';
 
         echo '<input type="hidden" name="filter_orders_by_origin_nonce" value="' . esc_attr($nonce) . '">';
 
@@ -37,16 +36,15 @@ function filter_orders_by_origin_and_month()
 
         if (false === $origins) {
             global $wpdb;
-            $query = $wpdb->prepare("SELECT DISTINCT pm.meta_value as origin
+            $query = "
+                SELECT DISTINCT pm.meta_value as origin
                 FROM {$wpdb->prefix}postmeta pm
                 INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
-                WHERE pm.meta_key = _wc_order_attribution_utm_source
-                AND p.post_type = shop_order
+                WHERE pm.meta_key = '_wc_order_attribution_utm_source'
+                AND p.post_type = 'shop_order'
                 AND pm.meta_value != ''
-            ");
-            //$prepared_query = $wpdb->prepare($query, '_wc_order_attribution_utm_source', 'shop_order');
-            $origins = $wpdb->prepare->get_col($query);
-            $origins = array_unique($origins);
+            ";
+            $origins = $wpdb->get_col($query);
             wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
         }
 
@@ -62,38 +60,17 @@ function filter_orders_by_origin_and_month()
             ?>
         </select>
         <?php
-
-        // Display the month filter dropdown
-        $months = array(
-            '202401' => __('January 2024', 'woocommerce'),
-            '202402' => __('February 2024', 'woocommerce'),
-            '202403' => __('March 2024', 'woocommerce'),
-            '202404' => __('April 2024', 'woocommerce'),
-            '202405' => __('May 2024', 'woocommerce'),
-            // Add more months as needed
-        );
-        ?>
-        <select name="m" id="order_month">
-            <option value=""><?php esc_html_e('All Months', 'woocommerce');?></option>
-            <?php
-            foreach ($months as $value => $label) {
-                $selected_attr = selected($current_month, $value, false);
-                echo '<option value="' . esc_attr($value) . '" ' . esc_attr($selected_attr) . '>' . esc_html($label) . '</option>';
-            }
-            ?>
-        </select>
-        <?php
     }
 }
 
 /**
- * Modifies the query to filter orders by origin and month.
+ * Modifies the query to filter orders by origin.
  *
  * @param WP_Query $query The current query object.
  */
-add_action('pre_get_posts', 'filter_orders_by_origin_and_month_query');
+add_action('pre_get_posts', 'filter_orders_by_origin_query');
 
-function filter_orders_by_origin_and_month_query($query)
+function filter_orders_by_origin_query($query)
 {
     global $typenow, $pagenow;
 
@@ -107,22 +84,6 @@ function filter_orders_by_origin_and_month_query($query)
                 ),
             );
             $query->set('meta_query', $meta_query);
-        }
-
-        if (isset($_GET['m']) && !empty($_GET['m'])) {
-            $yearmonth = sanitize_text_field($_GET['m']);
-            if (preg_match('/^\d{6}$/', $yearmonth)) {
-                $year = substr($yearmonth, 0, 4);
-                $month = substr($yearmonth, 4, 2);
-
-                $date_query = array(
-                    array(
-                        'year' => $year,
-                        'monthnum' => $month,
-                    ),
-                );
-                $query->set('date_query', $date_query);
-            }
         }
     }
 }
