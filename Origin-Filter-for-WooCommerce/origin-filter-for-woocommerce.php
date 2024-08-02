@@ -36,17 +36,27 @@ function filter_orders_by_origin()
 
         if (false === $origins) {
             global $wpdb;
-            $query = "
-                SELECT DISTINCT pm.meta_value as origin
-                FROM {$wpdb->prefix}postmeta pm
-                INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
-                WHERE pm.meta_key = '_wc_order_attribution_utm_source'
-                AND p.post_type = 'shop_order'
-                AND pm.meta_value != ''
-            ";
-            $origins = $wpdb->get_col($query);
-            wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
+            
+      
+            $origins = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT pm.meta_value as origin
+            FROM {$wpdb->prefix}postmeta pm
+            INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
+            WHERE pm.meta_key = _wc_order_attribution_utm_source
+            AND p.post_type = shop_order
+            AND pm.meta_value != ''
+        "));
+        
+            // Check if the query executed successfully
+            if ($origins !== false) {
+                wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
+            } else {
+                // Log the error if the query fails
+                error_log('Query execution failed: ' . $wpdb->last_error);
+            }
         }
+        
+        
+        
 
         // Display the origin filter dropdown
         ?>
