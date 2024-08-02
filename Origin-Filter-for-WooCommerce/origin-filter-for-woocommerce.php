@@ -37,17 +37,25 @@ function filter_orders_by_origin()
         if (false === $origins) {
             global $wpdb;
             
-      
-            $wpdb->get_col($wpdb->prepare("SELECT DISTINCT pm.meta_value as origin
-            FROM {$wpdb->prefix}postmeta pm
-            INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
-            WHERE pm.meta_key = _wc_order_attribution_utm_source
-            AND p.post_type = shop_order
-            AND pm.meta_value != ''
-        "));
+            // Prepare the query with proper placeholders
+            $query = "
+                SELECT DISTINCT pm.meta_value as origin
+                FROM {$wpdb->prefix}postmeta pm
+                INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
+                WHERE pm.meta_key = %s
+                AND p.post_type = %s
+                AND pm.meta_value != ''
+            ";
+            
+            // Execute the query
+            $origins = $wpdb->get_col($wpdb->prepare($query, '_wc_order_attribution_utm_source', 'shop_order'));
         
-        wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
+            // Cache the results
+            wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
         }
+        
+        // At this point, $origins should contain the dropdown values
+        
         
         
         
