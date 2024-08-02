@@ -3,7 +3,7 @@
  * Plugin Name: Origin Filter for WooCommerce
  * Plugin URI:  https://github.com/georgosabdulnour/origin-filter-for-woocommerce
  * Description: Adds a filter to WooCommerce orders to filter by order origin and displays total sales for the filtered origin and month.
- * Version:     1.1
+ * Version:     1.0
  * Author:      Georgos Abdulnour
  * Author URI: https://github.com/georgosabdulnour
  * License:     GPL2
@@ -38,7 +38,7 @@ function filter_orders_by_origin()
             global $wpdb;
             
       
-            $origins = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT pm.meta_value as origin
+            $wpdb->get_col($wpdb->prepare("SELECT DISTINCT pm.meta_value as origin
             FROM {$wpdb->prefix}postmeta pm
             INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
             WHERE pm.meta_key = _wc_order_attribution_utm_source
@@ -46,13 +46,7 @@ function filter_orders_by_origin()
             AND pm.meta_value != ''
         "));
         
-            // Check if the query executed successfully
-            if ($origins !== false) {
-                wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
-            } else {
-                // Log the error if the query fails
-                error_log('Query execution failed: ' . $wpdb->last_error);
-            }
+        wp_cache_set($cache_key, $origins, $cache_group, 12 * HOUR_IN_SECONDS);
         }
         
         
