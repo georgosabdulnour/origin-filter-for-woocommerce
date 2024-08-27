@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: of
+ * Plugin Name: Origin Filter for Woocommerce
  * Plugin URI:  https://github.com/georgosabdulnour/origin-filter-for-woocommerce
  * Description: Adds a filter to WooCommerce orders to filter by order origin and displays total sales for the filtered origin and month.
  * Version:     1.0
