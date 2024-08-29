@@ -11,7 +11,7 @@ is a WordPress plugin designed to enhance the order management capabilities of W
 ## Installation
 1. **Download the Plugin:**
    You can download the plugin from the following link:
-  [Download Plugin ZIP](https://drive.google.com/file/d/16IlEqrkdMvLor1_UK7L2FbXtGV6Wi2yT/view?usp=sharing)
+  [Download Plugin from Wordpress](https://wordpress.org/plugins/origin-filter-for-woocommerce)
 
 2. **Install the Plugin:**
    - Log in to your WordPress admin panel.
