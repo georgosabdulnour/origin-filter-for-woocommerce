@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Origin Filter for WooCommerce
  * Plugin URI:  https://github.com/georgosabdulnour/origin-filter-for-woocommerce
- * Description: Adds advanced filters for WooCommerce orders, including origin (UTM source) and payment gateway filters. Also displays total sales for the filtered origin and month.
+ * Description: Adds advanced filters for WooCommerce orders, including origin (UTM source) and payment gateway filters.
  * Version:     2.0
  * Text Domain: origin-filter-for-woocommerce
  * Author:      Georgos Abdulnour
